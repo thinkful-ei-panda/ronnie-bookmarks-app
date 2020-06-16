@@ -1,0 +1,200 @@
+
+body{
+  background-image: url("bookshelf.png");
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+h1 {
+  color: antiquewhite;
+  font-size: 2.5rem;
+  text-align: center;
+  align-self: center;
+  text-shadow: 0px 3px 3px rgb(0, 0, 0);
+}
+
+body{
+  width: 100%;
+  background-color: bisque;
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  margin: 0px;
+  text-shadow: 0px 1.4px 1px rgba(0, 0, 0, 0.564);
+}
+
+ul{
+  color: antiquewhite;
+  display: flex;
+  flex-direction: column;
+}
+
+li h3 {
+  display: flex;
+    font-size: 2rem;
+    flex-direction: row;
+    justify-content: start;
+    margin: auto;
+}
+li span{
+display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  padding-right: 3rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    padding-right: 1rem;
+    padding-bottom: 0px;
+    margin: auto;
+}
+a{
+  color: antiquewhite;
+}
+li {
+  border-bottom-style: solid;
+  border-width: 1px;
+  font-size: 3rem;
+  margin: 0px;
+  display: flex;
+  font-weight: bold;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  text-align: center;
+}
+[type=submit], [type=reset], button, html [type=button] {
+  font-size: 1.5rem;
+}
+
+fieldset{
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  text-align: center;
+}
+section{
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  padding: 1rem;
+  font-size: 1.3rem;
+}
+h2{
+  color: antiquewhite;
+  font-size: 1.5rem;
+  margin: auto;
+  padding: .5rem;
+}
+form {
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+}
+.hidden {
+  display: none;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+p {
+  margin: none;
+  font-size: 1.3rem;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: auto;
+  text-align: center;
+}
+
+li{
+  border-bottom-style: solid;
+  border-width: 1px;
+  font-size: 3rem;
+  margin: 0px;
+  font-weight: bold;
+}
+.fa-star {
+  font-size: 1.3rem;
+
+}
+.new-bookmark-button {
+
+  font-size: 2rem;
+ 
+  width: 100%;
+}
+
+#top-buttons {
+  justify-content: space-evenly;
+  height: 1rem;
+  padding-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+
+.new-url, .new-name {
+  width: 80%;
+  height: 2vh;
+  border-radius: 0;
+  margin-bottom: 1%
+}
+.margin-auto {
+  margin: auto 0;
+}
+
+.description-box {
+  border-style: solid;
+  width: 81%;
+  text-align: center;
+  justify-content: center;
+  margin: auto;
+  padding: auto;
+  border-width: 1px;
+}
+textarea{
+  margin: 0px;
+  width: 22rem;
+  height: 9rem;
+}
+@media all and (min-width: 750px) {
+  button, select{
+    background-color: antiquewhite;
+  }
+  h1{
+    font-size: 4rem;
+  }
+  
+  li{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  
+  }
+  body{
+    align-self: center;
+    justify-content: space-evenly;
+  }
+main{
+  padding: 15rem;
+  padding-top: 1rem;
+}
+.fa-star{
+  padding-bottom: 1rem;
+}
+
+}

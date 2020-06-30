@@ -12,7 +12,7 @@ const main = function () {
 
 
   bookmarks.bindEventListeners();
-  bookmarks.render();
+  bookmarks.renderHome();
 };
 
 $(main);

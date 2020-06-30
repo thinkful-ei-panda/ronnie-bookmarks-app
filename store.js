@@ -14,11 +14,6 @@ function addItem(item) {
   this.STORE.bookmarks.push(item);
 }
 
-function findAndUpdate(id,newData) {
-  let foundItem = this.findById(id);
-  Object.assign(foundItem, newData);
-}
-
 function findAndDelete(id) {
   this.STORE.bookmarks = this.STORE.bookmarks.filter(currentItem => currentItem.id !== id);
 }
@@ -27,11 +22,18 @@ function changeFilter(newMin) {
   this.STORE.minRating = newMin;
 }
 
+function getMinRating() {
+  return this.STORE.minRating;
+}
+function getBookmarks() {
+  return this.STORE.bookmarks;
+}
 export default {
   STORE,
   findById,
   addItem,
   findAndDelete,
-  findAndUpdate,
-  changeFilter
+  changeFilter,
+  getBookmarks,
+  getMinRating
 };

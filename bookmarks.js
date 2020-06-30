@@ -2,6 +2,74 @@
 import store from './store.js';
 import api from './api.js';
 
+function generateNewBookmarkForm(){
+ return`
+  <section id="new-bookmark-section">
+  <form id="new-bookmark-form">
+    <fieldset> 
+          <h2>Add New Bookmark:</h2>
+         <input type="text" class="new-name" name="new-name" placeholder="Website Name" required>
+         <label for="select-a-rating"></label>
+          <select class="new-rating" name='new-rating' required>
+            <option value="">Select a rating</option>
+            <option value="5">★★★★★</option>
+            <option value="4">★★★★</option>
+            <option value="3">★★★</option>
+            <option value="2">★★</option>
+            <option value="1">★</option>
+          </select>
+        </div>
+      </div>
+      <input type="text" class="new-url" name="new-url" placeholder="www.example.com" required>
+      
+     
+
+      <div class='add-description-box'>
+        <textarea id="new-description" name="description-text" placeholder='Add a description'></textarea>
+      </div>
+
+      <div class="bookmark-form-buttons">
+        <input type="button" id="cancel-new-bookmark" value="Cancel"></input>
+        <button type="submit" id="submit-new-bookmark">Create</button>
+      </div>
+    </fieldset>
+  </form>
+</section>`
+}
+function renderNewBookmarkForm(){
+  const html = generateNewBookmarkForm();
+  $('.root').html(html);
+}
+
+function generateHome(){
+  return `
+  <p class="error hidden"></p>
+  <section class='flex flex-row' id='top-buttons'>
+    <form id='new-bookmark-button'>
+      <button type="submit" class='new-bookmark-button'>+ADD</button>
+    </form>
+    <form id='rating-selector-form'>
+      <label for="min-rating-selector" class='hidden'>Minimum Rating</label>
+      <select class="min-rating-selector" id="min-rating-selector" name="min-rating-selector">
+        <option value="">Minimum Rating</option>
+        <option value="5">★★★★★</option>
+        <option value="4">★★★★</option>
+        <option value="3">★★★</option>
+        <option value="2">★★</option>
+        <option value="1">★</option>
+    </select>
+    </form>
+  </section>
+
+    <ul class="bookmark-list js-bookmark-list">
+     </ul>  
+  `
+}
+
+function renderHome(){
+  const html = generateHome();
+  $('.root').html(html);
+}
 
 function generateItemRating(item) {
   let html = [];
@@ -19,16 +87,16 @@ function generateItemRating(item) {
 function generateItemElement(item) {
   
   return `<li class='js-item-element' id='${item.id}' data-item-id="${item.id}">
-              <h3 class="bookmark-label">${item.title}</h3>
+              <h2 class="bookmark-label">${item.title}</h2>
                 <span class="star-rating">
                     ${generateItemRating(item)}
                 </span>
-                  <button id='${item.id}-button' type="button" class="fa fa-plus"></button>
+                  <button id='${item.id}-button' type="button" class="fa fa-plus"> click</button>
                   <div id='${item.id}-description' class='hidden'>
                   <section>
                   <a href="${item.url}" target="_blank">Visit Site</a>
                   <p class='description'>${item.desc}</p>
-                  <button type="button" class='far fa-trash-alt js-item-delete'></button>
+                  <button type="button" class='far fa-trash-alt js-item-delete'> delete</button>
                   </section>
                 </div>
           </li>`;
@@ -50,47 +118,51 @@ function generateBookmarksString(bookmarks) {
 }
 
 function render() {
-  let bookmarks = [...store.STORE.bookmarks];
-  if (store.STORE.minRating) {
-    bookmarks = bookmarks.filter(item => item.rating >= store.STORE.minRating);
+  let bookmarks = store.getBookmarks();
+  let minRating = store.getMinRating();
+  if (minRating) {
+    bookmarks = bookmarks.filter(item => item.rating >= minRating);
   }
   const bookmarksString = generateBookmarksString(bookmarks);
   $('.js-bookmark-list').html(bookmarksString);
 }
 
 function handleNewBookmarkButton() {
-  $('#new-bookmark-button').submit(event => {
+  $('.root').on('click','.new-bookmark-button', event => {
     event.preventDefault();
-    $('#new-bookmark-section').removeClass('hidden');
-    render();
+    renderNewBookmarkForm();  
   });
 }
 
 function handleNewItemSubmit() {
-  $('#new-bookmark-form').submit(event => {
+  $('.root').submit('#submit-new-bookmark', event => {
     event.preventDefault();
-    const newItemName = $('.new-name').val(),
-      newItemURL = $('.new-url').val(),
-      newItemRating = $('.new-rating').val();
+    let expression = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi;
+    let regex = new RegExp(expression);
+    const newItemName = $('.new-name').val();
+    const newItemURL = $('.new-url').val();
+    const newItemRating = $('.new-rating').val();
     let newItemDesc = '';
     if ($('#new-description')) {
       newItemDesc = $('#new-description').val();
     }
-    if (newItemURL.match(/http/g)) {
+    if (newItemURL.match(regex)) {
       if (!$('.error').hasClass('hidden')){
         $('.error').addClass('hidden');
-      }
-      api.createBookmark(newItemName,newItemURL,newItemDesc,newItemRating)
-        .then((newItem) => {
-          store.addItem(newItem);
-          $('#new-bookmark-section').addClass('hidden');
-          render();
-        })
-        .catch(err => renderErrorMessage(err.message));
+      };
+      const newOne = api.createBookmark(newItemName, newItemURL, newItemDesc, newItemRating);
+      newOne.then((data)=> {
+        store.addItem(data);
+        renderHome();
+        render();
+      })
+      .catch((err) => {
+        renderErrorMessage(err.message)
+      })
     } else {
-      renderErrorMessage('Check the url (http/https)');
+      renderErrorMessage('Check the ITEM URL')
     }
-  });
+  })
 }
 
 function getItemIdFromElement(item) {
@@ -100,7 +172,7 @@ function getItemIdFromElement(item) {
 }
 
 function handleBookmarkExpand() {
-  $('ul').on('click','.fa-plus', event => {
+  $('.root').on('click','.fa-plus', event => {
     event.preventDefault();
     let id = $(event.target).closest('li').attr('id');
     $(`#${id}-description`).removeClass('hidden');
@@ -110,7 +182,7 @@ function handleBookmarkExpand() {
 }
 
 function handleBookmarkCollapse() {
-  $('ul').on('click','.fa-minus', event => {
+  $('.root').on('click','.fa-minus', event => {
     event.preventDefault();
     let id = $(event.target).closest('li').attr('id');
     $(`#${id}-description`).addClass('hidden');
@@ -120,7 +192,7 @@ function handleBookmarkCollapse() {
 }
 
 function handleDeleteItemClicked() {
-  $('.js-bookmark-list').on('click', '.js-item-delete', event => {
+  $('.root').on('click', '.js-item-delete', event => {
     const id = getItemIdFromElement(event.currentTarget);
     api.deleteBookmark(id)
       .then(() => {
@@ -132,9 +204,10 @@ function handleDeleteItemClicked() {
 }
 
 function handleCancelNewBookmark() {
-  $('#cancel-button').click(event => {
+  $('.root').on('click', '#cancel-new-bookmark', event => {
     event.preventDefault();
-    $('#new-bookmark-section').addClass('hidden');
+    renderHome();
+    render();
   });
 }
 
@@ -144,6 +217,7 @@ function handleFilterChange() {
     render();
   });
 }
+
 
 function bindEventListeners() {
   handleNewBookmarkButton();
@@ -156,6 +230,7 @@ function bindEventListeners() {
 }
 
 export default {
+  renderHome,
   render,
   bindEventListeners
 };

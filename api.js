@@ -23,43 +23,30 @@ function getBookmarks() {
   return listApiFetch(`${BASE_URL}/bookmarks`);
 }
 
-function createBookmark(title, url, desc = '', rating) {
+function createBookmark(title, url, desc, rating) {
   let newBookmark = {
     title: title,
     url: url,
     desc: desc,
-    rating: rating
+    rating: rating,
   };
-
-  // console.log(`${BASE_URL}/bookmarks`, {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify(newBookmark)
-  // });
-  return listApiFetch(`${BASE_URL}/bookmarks`, {
+  return fetch(`${BASE_URL}/bookmarks`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(newBookmark)
+    body: JSON.stringify(newBookmark),
+  }).then(response => response.json())
+  .then(data => {
+    console.log('Success:', data);
+    return data
+  })
+  .catch((error) => {
+    console.error('Error:', error);
   });
-}
-
-function updateBookmark(id, title, url, desc = '', rating) {
-  let updateBookmark = JSON.stringify({
-    id: id,
-    title: title,
-    url: url,
-    desc: desc,
-    rating: rating
-  });
-  return listApiFetch(`${BASE_URL}/bookmarks/${id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: updateBookmark
-  });
+  
 }
 
 function deleteBookmark(id) {
-  return listApiFetch(`${BASE_URL}/bookmarks/${id}`, {
+  return fetch(`${BASE_URL}/bookmarks/${id}`, {
     method: 'DELETE'
   });
 }
@@ -67,6 +54,5 @@ function deleteBookmark(id) {
 export default {
   getBookmarks,
   createBookmark,
-  updateBookmark,
   deleteBookmark
 };

@@ -3,11 +3,28 @@ ronnie's boomarks app
 
 
 user stories
+function renderHome(){
+//initial view when open page
 
+//fetch get all bookmarks in store
+
+//generate their template and insert in home page html
+
+}
 Function addNewBookmark(){
 //on click of add button
 
 //render add bookmark form in html
+
+// add title
+
+//add rating(select dropdown)
+
+//add url
+
+//add descritpion
+
+//cancel and create buttons
 }
 
 function cancelBookmark(){
@@ -42,7 +59,7 @@ function createBookmark(){
 //on click of create button
 
 //get all values from form
-
+//validate values to be correct or send corresponding errors to fix
 //fetch post to store
 
 //render new bookmark list

@@ -210,9 +210,9 @@ function handleCancelNewBookmark() {
     render();
   });
 }
-
 function handleFilterChange() {
-  $('.min-rating-selector').change(event => {
+  $('.root').change('.min-rating-selector', () => {
+    event.preventDefault();
     store.changeFilter($(event.target).val());
     render();
   });

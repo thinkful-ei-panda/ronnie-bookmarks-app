@@ -170,6 +170,14 @@ textarea{
   width: auto;
   height: 9rem;
 }
+.error{
+  text-align: center;
+  color: rgb(0, 8, 255);
+  background: seashell;
+  border-radius: 10px;
+  width: auto;
+
+}
 [type=button], button, select{
   background-color: antiquewhite;
   width:auto;

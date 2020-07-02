@@ -4,13 +4,17 @@ import api from './api.js';
 
 function generateNewBookmarkForm(){
  return`
-  <section id="new-bookmark-section">
+  <section id="new-bookmark-section"> 
+  
   <form id="new-bookmark-form">
-    <fieldset> 
+  <p class="error hidden"></p>
+    <fieldset>
+    <legend class="hidden">Add New Bookmark</legend> 
           <h2>Add New Bookmark:</h2>
-         <input type="text" class="new-name" name="new-name" placeholder="Website Name" required>
-         <label for="select-a-rating"></label>
-          <select class="new-rating" name='new-rating' required>
+          <label for="new-name-input" class="hidden">Enter Title</label>
+         <input type="text" class="new-name" id="new-name-input" name="new-name" placeholder="Website Name" required>
+         <label for="select-a-rating" class="hidden">Choose a rating</label>
+          <select class="new-rating" id="select-a-rating" name='new-rating' required>
             <option value="">Select a rating</option>
             <option value="5">★★★★★</option>
             <option value="4">★★★★</option>
@@ -20,11 +24,13 @@ function generateNewBookmarkForm(){
           </select>
         </div>
       </div>
-      <input type="text" class="new-url" name="new-url" placeholder="www.example.com" required>
+      <label for="new-url-input" class="hidden">Enter a URL</label>
+      <input type="text" class="new-url" id="new-url-input" name="new-url" placeholder="www.example.com" required>
       
      
 
       <div class='add-description-box'>
+      <label for="new-description" class="hidden">Enter a description</label>
         <textarea id="new-description" name="description-text" placeholder='Add a description'></textarea>
       </div>
 
@@ -36,14 +42,41 @@ function generateNewBookmarkForm(){
   </form>
 </section>`
 }
+
 function renderNewBookmarkForm(){
   const html = generateNewBookmarkForm();
-  $('.root').html(html);
+  $('main').html(html);
+}
+
+function generateExpand(item){
+  return `
+  <div id='${item.id}-description'>
+  <section>
+  <a href="${item.url}" target="_blank">Visit Site</a>
+  <p class='description'>${item.desc}</p>
+  <button type="button" class='far fa-trash-alt js-item-delete'> delete</button>
+  </section>
+</div>
+  `
+}
+
+function generateCollapse(item){
+  return ``
+}
+
+function renderExpand(currentElement){
+  const html = generateExpand(currentElement);
+  $(`.js-item-element-${currentElement.id}`).append(html);
+}
+
+function renderCollapse(currentElement){
+  const html = generateCollapse();
+  $(`#${currentElement.id}-description`).replaceWith(html);
 }
 
 function generateHome(){
   return `
-  <p class="error hidden"></p>
+ 
   <section class='flex flex-row' id='top-buttons'>
     <form id='new-bookmark-button'>
       <button type="submit" class='new-bookmark-button'>+ADD</button>
@@ -51,7 +84,7 @@ function generateHome(){
     <form id='rating-selector-form'>
       <label for="min-rating-selector" class='hidden'>Minimum Rating</label>
       <select class="min-rating-selector" id="min-rating-selector" name="min-rating-selector">
-        <option value="">Minimum Rating</option>
+        <option value="1">Minimum Rating</option>
         <option value="5">★★★★★</option>
         <option value="4">★★★★</option>
         <option value="3">★★★</option>
@@ -68,7 +101,7 @@ function generateHome(){
 
 function renderHome(){
   const html = generateHome();
-  $('.root').html(html);
+  $('main').html(html);
 }
 
 function generateItemRating(item) {
@@ -86,19 +119,12 @@ function generateItemRating(item) {
 
 function generateItemElement(item) {
   
-  return `<li class='js-item-element' id='${item.id}' data-item-id="${item.id}">
+  return `<li class='js-item-element-${item.id}' id='${item.id}' data-item-id="${item.id}">
               <h2 class="bookmark-label">${item.title}</h2>
                 <span class="star-rating">
                     ${generateItemRating(item)}
                 </span>
-                  <button id='${item.id}-button' type="button" class="fa fa-plus"> click</button>
-                  <div id='${item.id}-description' class='hidden'>
-                  <section>
-                  <a href="${item.url}" target="_blank">Visit Site</a>
-                  <p class='description'>${item.desc}</p>
-                  <button type="button" class='far fa-trash-alt js-item-delete'> delete</button>
-                  </section>
-                </div>
+                  <button id='${item.id}-button' type="button" class="fa fa-plus" > more</button>
           </li>`;
 }
 
@@ -128,14 +154,14 @@ function render() {
 }
 
 function handleNewBookmarkButton() {
-  $('.root').on('click','.new-bookmark-button', event => {
+  $('main').on('click','.new-bookmark-button', event => {
     event.preventDefault();
     renderNewBookmarkForm();  
   });
 }
 
 function handleNewItemSubmit() {
-  $('.root').submit('#submit-new-bookmark', event => {
+  $('main').submit('#submit-new-bookmark', event => {
     event.preventDefault();
     let expression = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi;
     let regex = new RegExp(expression);
@@ -148,19 +174,20 @@ function handleNewItemSubmit() {
     }
     if (newItemURL.match(regex)) {
       if (!$('.error').hasClass('hidden')){
-        $('.error').addClass('hidden');
+        $('.error').removeClass('hidden');
       };
       const newOne = api.createBookmark(newItemName, newItemURL, newItemDesc, newItemRating);
       newOne.then((data)=> {
         store.addItem(data);
-        renderHome();
         render();
+        renderHome();
+        
       })
       .catch((err) => {
         renderErrorMessage(err.message)
       })
     } else {
-      renderErrorMessage('Check the ITEM URL')
+      renderErrorMessage('Check the URL')
     }
   })
 }
@@ -172,28 +199,36 @@ function getItemIdFromElement(item) {
 }
 
 function handleBookmarkExpand() {
-  $('.root').on('click','.fa-plus', event => {
+  $('main').on('click','.fa-plus', event => {
     event.preventDefault();
     let id = $(event.target).closest('li').attr('id');
-    $(`#${id}-description`).removeClass('hidden');
+    const currentElement = store.findById(id);
+    if(currentElement){
+      renderExpand(currentElement);
+    }
     $(`#${id}-button`).removeClass('fa-plus');
     $(`#${id}-button`).addClass('fa-minus');
   });
 }
 
 function handleBookmarkCollapse() {
-  $('.root').on('click','.fa-minus', event => {
+  $('main').on('click','.fa-minus', event => {
     event.preventDefault();
     let id = $(event.target).closest('li').attr('id');
-    $(`#${id}-description`).addClass('hidden');
+    const currentElement = store.findById(id);
+    if(currentElement){
+      renderCollapse(currentElement);
+    }
+    
     $(`#${id}-button`).removeClass('fa-minus');
     $(`#${id}-button`).addClass('fa-plus');
   });
 }
 
 function handleDeleteItemClicked() {
-  $('.root').on('click', '.js-item-delete', event => {
-    const id = getItemIdFromElement(event.currentTarget);
+  $('main').on('click', '.js-item-delete', event => {
+    event.preventDefault();
+    const id = $(event.target).closest('li').attr('id');
     api.deleteBookmark(id)
       .then(() => {
         store.findAndDelete(id);
@@ -204,20 +239,20 @@ function handleDeleteItemClicked() {
 }
 
 function handleCancelNewBookmark() {
-  $('.root').on('click', '#cancel-new-bookmark', event => {
+  $('main').on('click', '#cancel-new-bookmark', event => {
     event.preventDefault();
     renderHome();
     render();
   });
 }
+
 function handleFilterChange() {
-  $('.root').change('.min-rating-selector', () => {
+  $('main').change('.min-rating-selector', event => {
     event.preventDefault();
-    store.changeFilter($(event.target).val());
+    store.changeFilter($('.min-rating-selector').val());
     render();
   });
 }
-
 
 function bindEventListeners() {
   handleNewBookmarkButton();
